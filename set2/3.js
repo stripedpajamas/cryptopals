@@ -3,8 +3,9 @@
  */
 
 const padder = require('./1');
-const ecb = require('../set1/7');
 const cbc = require('./2');
+const ecb = require('../set1/7');
+const findDupes = require('../set1/8').findDupes;
 
 const oracle = {
   generateRandomKey(length) {
@@ -43,12 +44,14 @@ const oracle = {
       // if CBC generate a random IV
       const iv = this.generateRandomKey(16);
 
-      // encrypt
-      return cbc.encrypt(plaintext, key, iv);
-    } else { // ecb mode
-      // encrypt
-      return ecb.encrypt(plaintext, key);
+      // encrypt cbc mode
+      return { mode: 'cbc', ciphertext: cbc.encrypt(plaintext, key, iv) };
+    } else { // encrypt ecb mode
+      return { mode: 'ecb', ciphertext: ecb.encrypt(plaintext, key) };
     }
+  },
+  orc(input) {
+    return findDupes(input) ? 'ecb' : 'cbc';
   }
 };
 

@@ -56,7 +56,16 @@ describe('set2', () => {
       const input = 'See the line where the sky meets the sea? It calls me.';
       const output1 = three.randomEncrypt(input, 'utf8');
       const output2 = three.randomEncrypt(input, 'utf8');
-      expect(output1).to.not.equal(output2);
+      expect(output1).to.not.deep.equal(output2);
     });
+    it('should detect the mode used', () => {
+      const input = 'a'.repeat(200); // nice identical stuff for us to find in ECB :)
+      const output = three.randomEncrypt(input, 'utf8');
+      expect(three.orc(output.ciphertext)).to.equal(output.mode);
+    });
+  });
+
+  describe('challenge 4', () => {
+
   });
 });

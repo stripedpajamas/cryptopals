@@ -2,11 +2,9 @@
  * Created by psquicciarini on 6/16/17.
  */
 
-const detectECB = (inputHaystack) => {
-  // expecting an array of inputs to analzye
-  output = [];
-  inputHaystack.forEach((input, idx) => {
-    const bufferedInput = Buffer.from(input, 'hex');
+const detectECB = {
+  findDupes(input) {
+    const bufferedInput = Buffer.isBuffer(input) ? input : Buffer.from(input, 'hex');
     const length = Buffer.byteLength(bufferedInput, 'hex');
 
     // ecb is deterministic, so the same plaintext chunk of 16 bytes would be encrypted into the same ciphertext chunk of 16 bytes
@@ -25,11 +23,13 @@ const detectECB = (inputHaystack) => {
         counts[chunk] = 1;
       }
     });
-    if (Object.keys(counts).filter((chunk) => counts[chunk] > 1).length) {
-      output.push(idx);
-    }
-  });
-  return output;
-};
+    return Object.keys(counts).filter((chunk) => counts[chunk] > 1).length // it is ECB
+  },
+  detectECBinArray(inputHaystack) {
+    // expecting an array of inputs to analzye
+    return inputHaystack.filter(this.findDupes);
+  }
+}
+;
 
 module.exports = detectECB;
