@@ -51,7 +51,7 @@ const oracle = {
     }
   },
   orc(input) {
-    return findDupes(input) ? 'ecb' : 'cbc';
+    return findDupes(input, 16) ? 'ecb' : 'cbc';
   }
 };
 

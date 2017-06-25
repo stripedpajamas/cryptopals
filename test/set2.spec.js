@@ -9,6 +9,7 @@ const path = require('path');
 const one = require('../set2/1');
 const two = require('../set2/2');
 const three = require('../set2/3');
+const four = require('../set2/4');
 
 const expect = chai.expect;
 
@@ -66,6 +67,21 @@ describe('set2', () => {
   });
 
   describe('challenge 4', () => {
+    const secretSauce = 'Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK';
+    const output = 'Rollin\' in my 5.0\nWith my rag-top down so my hair can blow\nThe girlies on standby waving just to say hi\nDid you stop? No, I just drove by\n\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000';
+    const fourWithSecret = four(secretSauce);
 
+    it('should encrypt with a consistent random key', () => {
+      expect(fourWithSecret.encryptWithSecretSauce('test')).to.equal(fourWithSecret.encryptWithSecretSauce('test'));
+    });
+    it('should determine the block size of ciphertext', () => {
+      expect(fourWithSecret.findBlockSize()).to.equal(16);
+    });
+    it('should detect ECB as the mode used', () => {
+      expect(fourWithSecret.detectECB()).to.be.true;
+    });
+    it('should determine the secret sauce', () => {
+      expect(fourWithSecret.crack()).to.equal(output);
+    }).timeout(5000);
   });
 });
