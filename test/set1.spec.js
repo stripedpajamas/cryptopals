@@ -102,6 +102,13 @@ xdescribe('set1', () => {
       expect(seven.encrypt(input, key, 'utf8', 'utf8')).to.equal(output);
       expect(seven.decrypt(output, key, 'hex', 'utf8')).to.equal(input);
     });
+    it('should accept buffers for key and input', () => {
+      const input = Buffer.from('two seventy three alfredo sauce!');
+      const output = '7fd5e4aa58a5ba5ccd0f36f70ec73f9118b85f95de41ce8ffc179f6f3500a61f';
+      const key = Buffer.from('KOMBUCHA IS LIFE');
+      expect(seven.encrypt(input, key)).to.equal(output);
+      expect(seven.decrypt(output, key, 'hex')).to.equal(input.toString());
+    });
   });
 
   describe('challenge 8', () => {

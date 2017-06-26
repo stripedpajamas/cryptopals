@@ -1,11 +1,15 @@
 {
   "name": "cryptopals",
   "version": "0.0.1",
+  "scripts": {
+    "test": "mocha"
+  },
   "devDependencies": {
     "chai": "^4.0.2",
     "mocha": "^3.4.2"
   },
   "dependencies": {
-    "aes-js": "^3.1.0"
+    "aes-js": "^3.1.0",
+    "qs": "^6.4.0"
   }
 }

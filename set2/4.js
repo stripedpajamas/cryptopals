@@ -38,7 +38,6 @@ const ecbDecryptSingleByte = (secretSauce) => ({
   },
   crack() {
     const blockSize = this.findBlockSize();
-    if (!this.detectECB(blockSize)) return "Not ECB. Can't crack.";
 
     const secretSauceLength = (Buffer.from(this.encryptWithSecretSauce('A'.repeat(blockSize)), 'hex').length - blockSize);
 

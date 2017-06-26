@@ -10,6 +10,7 @@ const one = require('../set2/1');
 const two = require('../set2/2');
 const three = require('../set2/3');
 const four = require('../set2/4');
+const five = require('../set2/5');
 
 const expect = chai.expect;
 
@@ -57,7 +58,10 @@ describe('set2', () => {
       const input = 'See the line where the sky meets the sea? It calls me.';
       const output1 = three.randomEncrypt(input, 'utf8');
       const output2 = three.randomEncrypt(input, 'utf8');
+      const output3 = three.randomEncrypt(input, 'utf8');
+      const output4 = three.randomEncrypt(input, 'utf8');
       expect(output1).to.not.deep.equal(output2);
+      expect(output3).to.not.deep.equal(output4);
     });
     it('should detect the mode used', () => {
       const input = 'a'.repeat(200); // nice identical stuff for us to find in ECB :)
@@ -66,7 +70,7 @@ describe('set2', () => {
     });
   });
 
-  describe('challenge 4', () => {
+  xdescribe('challenge 4', () => {
     const secretSauce = 'Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK';
     const output = 'Rollin\' in my 5.0\nWith my rag-top down so my hair can blow\nThe girlies on standby waving just to say hi\nDid you stop? No, I just drove by\n\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000';
     const fourWithSecret = four(secretSauce);
@@ -83,5 +87,41 @@ describe('set2', () => {
     it('should determine the secret sauce', () => {
       expect(fourWithSecret.crack()).to.equal(output);
     }).timeout(5000);
+  });
+
+  describe('challenge 5', () => {
+    it('should parse a query string into an object', () => {
+      const input = 'foo=bar&baz=qux&zap=zazzle';
+      const output = {
+        foo: 'bar',
+        baz: 'qux',
+        zap: 'zazzle'
+      };
+      expect(five.parseQs(input)).to.deep.equal(output);
+    });
+    it('should sanitize meta-characters' ,() => {
+      const input = 'foo@bar.com&role=admin';
+      const output = 'foo@bar.com\&role\=admin';
+      expect(five.sanitize(input)).to.equal(output);
+    });
+    it('should create a profile object for an email', () => {
+      const input = 'foo@bar.com';
+      const output = 'email=foo@bar.com&uid=10&role=user';
+      expect(five.profileFor(input)).to.equal(output);
+    });
+    it('should encode the profile string', () => {
+      const input = 'foo@bar.com';
+      expect(five.generateEncodedProfile(input)).to.have.length(96);
+    });
+    it('should decode a profile string', () => {
+      const input = 'foo@bar.com';
+      const output = {
+        email: 'foo@bar.com',
+        uid: 10,
+        role: 'user'
+      };
+      const encodedProfile = five.generateEncodedProfile(input);
+      expect(five.decodeEncryptedProfile(encodedProfile)).to.deep.equal(output);
+    });
   });
 });

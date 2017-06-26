@@ -27,7 +27,7 @@ const detectECB = {
   },
   detectECBinArray(inputHaystack) {
     // expecting an array of inputs to analzye
-    return inputHaystack.filter(this.findDupes);
+    return inputHaystack.filter(input => this.findDupes(input, 16));
   }
 }
 ;
