@@ -63,7 +63,7 @@ const cutAndPaste = {
   },
   createAdminProfile() {
     // find blocksize first
-    const blockSize = 16; // this.findBlockSize(this.generateEncodedProfile);
+    const blockSize = this.findBlockSize(this.generateEncodedProfile);
 
     // get admin plus a bunch of 11s (16-5 = 11):
     const adminDiffLength = blockSize - 5;
