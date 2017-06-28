@@ -16,12 +16,12 @@ const ecbDecryptSingleByte = (secretSauce) => ({
 
     return ecb.encrypt(fullInput, this.key);
   },
-  findBlockSize() {
+  findBlockSize(encFunc) {
     let i = 1;
     let blockGuess = 0;
     let currentSize = 0;
     while (blockGuess < 1 && i <= 256) {
-      const currentCT = Buffer.from(this.encryptWithSecretSauce('A'.repeat(i)), 'hex');
+      const currentCT = Buffer.from(encFunc.call(this, 'A'.repeat(i)), 'hex');
       if (currentCT.length > currentSize && currentSize > 0) {
         blockGuess = currentCT.length - currentSize;
       }
@@ -31,13 +31,13 @@ const ecbDecryptSingleByte = (secretSauce) => ({
     return blockGuess;
   },
   detectECB(blockSize) {
-    const bs = blockSize || this.findBlockSize();
+    const bs = blockSize || this.findBlockSize(this.encryptWithSecretSauce);
     const payload = ('A'.repeat(bs)).repeat(5); // should definitely get a dupe here
     const ciphertext = this.encryptWithSecretSauce(payload);
     return detect.findDupes(ciphertext, bs);
   },
   crack() {
-    const blockSize = this.findBlockSize();
+    const blockSize = this.findBlockSize(this.encryptWithSecretSauce);
 
     const secretSauceLength = (Buffer.from(this.encryptWithSecretSauce('A'.repeat(blockSize)), 'hex').length - blockSize);
 

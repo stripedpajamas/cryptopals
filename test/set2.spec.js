@@ -79,7 +79,7 @@ describe('set2', () => {
       expect(fourWithSecret.encryptWithSecretSauce('test')).to.equal(fourWithSecret.encryptWithSecretSauce('test'));
     });
     it('should determine the block size of ciphertext', () => {
-      expect(fourWithSecret.findBlockSize()).to.equal(16);
+      expect(fourWithSecret.findBlockSize(fourWithSecret.encryptWithSecretSauce)).to.equal(16);
     });
     it('should detect ECB as the mode used', () => {
       expect(fourWithSecret.detectECB()).to.be.true;
@@ -101,13 +101,13 @@ describe('set2', () => {
     });
     it('should sanitize meta-characters' ,() => {
       const input = 'foo@bar.com&role=admin';
-      const output = 'foo@bar.com\&role\=admin';
+      const output = 'foo@bar.com\\&role\\=admin';
       expect(five.sanitize(input)).to.equal(output);
     });
     it('should create a profile object for an email', () => {
       const input = 'foo@bar.com';
-      const output = 'email=foo@bar.com&uid=10&role=user';
-      expect(five.profileFor(input)).to.equal(output);
+      const output = /email=foo@bar.com&uid=(\d{2})&role=user/;
+      expect(five.profileFor(input)).to.match(output);
     });
     it('should encode the profile string', () => {
       const input = 'foo@bar.com';
@@ -121,7 +121,13 @@ describe('set2', () => {
         role: 'user'
       };
       const encodedProfile = five.generateEncodedProfile(input);
-      expect(five.decodeEncryptedProfile(encodedProfile)).to.deep.equal(output);
+      const decodedProfile = five.decodeEncryptedProfile(encodedProfile);
+      expect(decodedProfile.email).to.equal(output.email);
+      expect(decodedProfile.role).to.equal(output.role);
+      expect(decodedProfile.uid).to.match(/\d{2}/);
+    });
+    it('should be able to create an admin profile', () => {
+      expect(five.createAdminProfile()).to.have.property('role').that.equals('admin');
     });
   });
 });
