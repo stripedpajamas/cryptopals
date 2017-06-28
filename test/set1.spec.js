@@ -17,7 +17,7 @@ const eight = require('../set1/8');
 
 const expect = chai.expect;
 
-xdescribe('set1', () => {
+describe('set1', () => {
 
   describe('challenge 1', () => {
     it('should convert hex to base64', () => {
