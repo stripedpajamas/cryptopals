@@ -11,6 +11,8 @@ const two = require('../set2/2');
 const three = require('../set2/3');
 const four = require('../set2/4');
 const five = require('../set2/5');
+const six = require('../set2/6');
+const seven = require('../set2/7');
 
 const expect = chai.expect;
 
@@ -128,6 +130,39 @@ describe('set2', () => {
     });
     it('should be able to create an admin profile', () => {
       expect(five.createAdminProfile()).to.have.property('role').that.equals('admin');
+    });
+  });
+
+  describe('challenge 6', () => {
+    it('should encrypt with a random but consistent prepend', () => {
+      const secretSauce = 'dHdvc2V2ZW50eXRocmVlIHRvbWF0byBzYXVjZQ==';
+      const sixWithSecret = six(secretSauce);
+      const fourWithSecret = four(secretSauce);
+
+      // four encrypts with random consistent key, but doesn't prepend random bytes. six will be longer.
+      expect(fourWithSecret.encryptWithSecretSauce('test').length).to.not.equal(sixWithSecret.encrypt('test').length);
+      expect(sixWithSecret.encrypt('test')).to.equal(sixWithSecret.encrypt('test'));
+    });
+    it('should crack the secret even with the random prepend', () => {
+      const secretSauce = 'dHdvc2V2ZW50eXRocmVlIHRvbWF0byBzYXVjZQ==';
+      const plaintext = 'twoseventythree tomato sauce\u0001\u0000\u0000\u0000';
+      const sixWithSecret = six(secretSauce);
+
+      expect(sixWithSecret.crack()).to.equal(plaintext);
+    });
+  });
+
+  describe('challenge 7', () => {
+    it('should strip off the padding if valid', () => {
+      const validPaddedInput = 'Play that funky music, white boy Come on, Come on, Come on \nPlay that funky music \n\u0004\u0004\u0004\u0004';
+      const output = 'Play that funky music, white boy Come on, Come on, Come on \nPlay that funky music \n';
+
+      expect(seven.removePad(validPaddedInput, 'utf8', 16)).to.equal(output);
+    });
+    it('should throw if trying to remove a pad that is invalid', () => {
+      const invalidPaddedInput = 'Play that funky music, white boy Come on, Come on, Come on \nPlay that funky music \n\u0003\u0002\u0001\u0004';
+
+      expect(seven.removePad.bind(this, invalidPaddedInput, 'utf8', 16)).to.throw(Error, 'Invalid pad');
     });
   });
 });
