@@ -13,6 +13,7 @@ const four = require('../set2/4');
 const five = require('../set2/5');
 const six = require('../set2/6');
 const seven = require('../set2/7');
+const eight = require('../set2/8');
 
 const expect = chai.expect;
 
@@ -163,6 +164,31 @@ describe('set2', () => {
       const invalidPaddedInput = 'Play that funky music, white boy Come on, Come on, Come on \nPlay that funky music \n\u0003\u0002\u0001\u0004';
 
       expect(seven.removePad.bind(this, invalidPaddedInput, 'utf8', 16)).to.throw(Error, 'Invalid pad');
+    });
+  });
+
+  describe('challenge 8', () => {
+    it('should encrypt with cbc', () => {
+      const enc = eight.encrypt('applesauce');
+      const detect = require('../set1/8');
+
+      // should be no dupes since we're not using ECB
+      expect(detect.findDupes(enc, 16)).to.be.false;
+    });
+    it('should sanitize input', () => {
+      const input = ';admin=true';
+      const output = '\\;admin\\=true';
+
+      expect(eight.sanitize(input)).to.equal(output);
+    });
+    it('should return false if admin=true is not found', () => {
+      const input = 'hello applesauce';
+      const encInput = eight.encrypt(input);
+
+      expect(eight.checkAdmin(encInput)).to.be.false;
+    });
+    it('should create an admin account with sneakiness', () => {
+      expect(eight.makeAdmin()).to.be.true;
     });
   });
 });
