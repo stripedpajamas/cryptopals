@@ -2,7 +2,6 @@
  * Created by psquicciarini on 6/20/17.
  */
 
-const padder = require('./1');
 const cbc = require('./2');
 const ecb = require('../set1/7');
 const findDupes = require('../set1/8').findDupes;
@@ -19,8 +18,8 @@ const oracle = {
     // assume input is a buffer
 
     // generate random bytes between 5 and 10 length
-    const appendBefore = this.generateRandomKey(Math.floor(Math.random() * 6 + 5));
-    const appendAfter = this.generateRandomKey(Math.floor(Math.random() * 6 + 5));
+    const appendBefore = this.generateRandomKey(Math.floor((Math.random() * 6) + 5));
+    const appendAfter = this.generateRandomKey(Math.floor((Math.random() * 6) + 5));
 
     const output = Buffer.alloc(input.length + appendBefore.length + appendAfter.length);
     appendBefore.copy(output, 0);
@@ -38,21 +37,18 @@ const oracle = {
     const key = this.generateRandomKey(16);
 
     // choose ECB or CBC randomly
-    const mode = Math.floor(Math.random() * 100) >= 50 ? 'cbc' : 'ecb';
-
-    if (mode === 'cbc') {
+    if (Math.floor(Math.random() * 100) >= 50) {
       // if CBC generate a random IV
       const iv = this.generateRandomKey(16);
 
       // encrypt cbc mode
       return { mode: 'cbc', ciphertext: cbc.encrypt(plaintext, key, iv) };
-    } else { // encrypt ecb mode
-      return { mode: 'ecb', ciphertext: ecb.encrypt(plaintext, key) };
     }
+    return { mode: 'ecb', ciphertext: ecb.encrypt(plaintext, key) };
   },
   orc(input) {
     return findDupes(input, 16) ? 'ecb' : 'cbc';
-  }
+  },
 };
 
 module.exports = oracle;

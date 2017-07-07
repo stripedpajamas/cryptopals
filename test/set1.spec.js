@@ -17,7 +17,7 @@ const eight = require('../set1/8');
 
 const expect = chai.expect;
 
-describe('set1', () => {
+describe('set 1', () => {
 
   describe('challenge 1', () => {
     it('should convert hex to base64', () => {
@@ -97,17 +97,19 @@ describe('set1', () => {
     });
     it('should encode AES-ECB', () => {
       const input = 'two seventy three alfredo sauce!';
-      const output = '7fd5e4aa58a5ba5ccd0f36f70ec73f9118b85f95de41ce8ffc179f6f3500a61f';
+      const output = '7fd5e4aa58a5ba5ccd0f36f70ec73f9118b85f95de41ce8ffc179f6f3500a61f789123cb6b31285e25afb0d331cb2af7';
       const key = 'KOMBUCHA IS LIFE';
+      const inputWithPad = 'two seventy three alfredo sauce!\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010';
       expect(seven.encrypt(input, key, 'utf8', 'utf8')).to.equal(output);
-      expect(seven.decrypt(output, key, 'hex', 'utf8')).to.equal(input);
+      expect(seven.decrypt(output, key, 'hex', 'utf8')).to.equal(inputWithPad);
     });
     it('should accept buffers for key and input', () => {
       const input = Buffer.from('two seventy three alfredo sauce!');
-      const output = '7fd5e4aa58a5ba5ccd0f36f70ec73f9118b85f95de41ce8ffc179f6f3500a61f';
+      const output = '7fd5e4aa58a5ba5ccd0f36f70ec73f9118b85f95de41ce8ffc179f6f3500a61f789123cb6b31285e25afb0d331cb2af7';
       const key = Buffer.from('KOMBUCHA IS LIFE');
+      const inputWithPad = 'two seventy three alfredo sauce!\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010';
       expect(seven.encrypt(input, key)).to.equal(output);
-      expect(seven.decrypt(output, key, 'hex')).to.equal(input.toString());
+      expect(seven.decrypt(output, key, 'hex')).to.equal(inputWithPad);
     });
   });
 

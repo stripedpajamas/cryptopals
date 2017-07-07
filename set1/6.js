@@ -21,7 +21,6 @@ module.exports = {
   },
   guessKeySize(input, enc) {
     const bufferedInput = Buffer.from(input, enc);
-    const inputLength = bufferedInput.length;
     const keySizes = [];
     for (let i = 2; i <= 50; i += 1) { // trying keysizes from 2 to 50
       const slices = [];
@@ -33,7 +32,8 @@ module.exports = {
       const hd3 = this.hammingDistance(slices[2], slices[3], 'hex') / i; // normalize hamming distance
       const hd4 = this.hammingDistance(slices[3], slices[4], 'hex') / i; // by dividing by keysize
 
-      keySizes.push({ keySize: i, normalizedHd: (hd1 + hd2 + hd3 + hd4) / 4 }); // average out the four slices
+      // average out the four slices
+      keySizes.push({ keySize: i, normalizedHd: (hd1 + hd2 + hd3 + hd4) / 4 });
     }
 
     keySizes.sort((a, b) => a.normalizedHd - b.normalizedHd); // sort by smallest hd
@@ -56,7 +56,9 @@ module.exports = {
 
       const transposeBlockSize = Math.ceil(length / keysize);
       const transposedInputArr = [];
-      for (let i = 0; i < keysize; i += 1) { // transpose input into blocks of just 1st byte of each block, just 2nd etc
+
+      // transpose input into blocks of just 1st byte of each block, just 2nd etc
+      for (let i = 0; i < keysize; i += 1) {
         transposedInputArr[i] = Buffer.alloc(transposeBlockSize);
         for (let j = 0; j < transposeBlockSize; j += 1) {
           transposedInputArr[i][j] = blockInput[j][i];
@@ -73,7 +75,7 @@ module.exports = {
       possibleDecrypted.push({
         key: keyArr.map(code => String.fromCharCode(code)).join(''),
         plaintext,
-        score: three.analyzeFreq(plaintext)
+        score: three.analyzeFreq(plaintext),
       });
     });
 
@@ -81,5 +83,5 @@ module.exports = {
     const winner = possibleDecrypted[0];
     delete winner.score;
     return winner;
-  }
+  },
 };

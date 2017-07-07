@@ -6,8 +6,9 @@ const aes = require('aes-js');
 const padder = require('../set2/1');
 
 const ecb = {
-  encrypt(input, key, inputEnc, keyEnc) {
-    const bufferedInput = padder(Buffer.isBuffer(input) ? input : Buffer.from(input, inputEnc), null, 16, true);
+  encrypt(input, key, inputEnc, keyEnc, alreadyPadded) {
+    const tempInput = Buffer.isBuffer(input) ? input : Buffer.from(input, inputEnc);
+    const bufferedInput = alreadyPadded ? tempInput : padder(tempInput, null, 16, true);
     let encodedKey;
     if (!Buffer.isBuffer(key)) {
       encodedKey = keyEnc === 'utf8' ? aes.utils.utf8.toBytes(key) : aes.utils.hex.toBytes(key);
@@ -34,7 +35,7 @@ const ecb = {
       return aes.utils.hex.fromBytes(decryptedBytes);
     }
     return aes.utils.utf8.fromBytes(decryptedBytes);
-  }
+  },
 };
 
 module.exports = ecb;

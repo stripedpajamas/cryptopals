@@ -6,7 +6,7 @@ const oracle = require('./3');
 const ecb = require('../set1/7');
 const detect = require('../set1/8');
 
-const ecbDecryptSingleByte = (secretSauce) => ({
+const ecbDecryptSingleByte = secretSauce => ({
   key: oracle.generateRandomKey(16), // static key for testing
   encryptWithSecretSauce(input, inputEnc) {
     const bufferedInput = Buffer.isBuffer(input) ? input : Buffer.from(input, inputEnc);
@@ -49,17 +49,20 @@ const ecbDecryptSingleByte = (secretSauce) => ({
         const payload = Buffer.from('A'.repeat(blockSize - j));
         const blockToCrack = Buffer.from(this.encryptWithSecretSauce(payload), 'hex').slice(k, k + blockSize);
         for (let i = 0; i <= 255; i += 1) {
-          const currentPayload = Buffer.concat([payload, Buffer.from(recoveredPlaintext), Buffer.from(String.fromCharCode(i))]);
+          const currentPayload = Buffer.concat([
+            payload,
+            Buffer.from(recoveredPlaintext),
+            Buffer.from(String.fromCharCode(i)),
+          ]);
           const block = Buffer.from(this.encryptWithSecretSauce(currentPayload), 'hex').slice(k, k + blockSize);
           dictionary[block.toString('hex')] = i;
         }
         const match = Object.keys(dictionary).find(block => Buffer.from(block, 'hex').equals(blockToCrack));
         recoveredPlaintext += String.fromCharCode(dictionary[match]);
       }
-
     }
     return recoveredPlaintext;
-  }
+  },
 });
 
 module.exports = ecbDecryptSingleByte;

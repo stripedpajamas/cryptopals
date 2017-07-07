@@ -30,8 +30,9 @@ const bitflipper = {
     const profile = plain.split(';');
     const profileObj = profile.reduce((t, e) => {
       const split = e.split('=');
-      t[split[0]] = split[1];
-      return t;
+      const newt = t;
+      newt[split[0]] = split[1];
+      return newt;
     }, {});
     return Object.hasOwnProperty.call(profileObj, 'admin') && profileObj.admin === 'true';
   },
@@ -57,7 +58,7 @@ const bitflipper = {
     }
     enc = enc.toString('hex');
     return this.checkAdmin(enc);
-  }
+  },
 };
 
 module.exports = bitflipper;

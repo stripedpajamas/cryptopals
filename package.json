@@ -2,10 +2,14 @@
   "name": "cryptopals",
   "version": "0.0.1",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "chai": "^4.0.2",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.7.0",
     "mocha": "^3.4.2"
   },
   "dependencies": {

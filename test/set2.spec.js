@@ -17,7 +17,7 @@ const eight = require('../set2/8');
 
 const expect = chai.expect;
 
-describe('set2', () => {
+describe('set 2', () => {
   describe('challenge 1', () => {
     it('should pad according to PKCS#7', () => {
       const input = 'YELLOW SUBMARINE';
@@ -30,11 +30,12 @@ describe('set2', () => {
   describe('challenge 2', () => {
     it('should encrypt and decrypt using AES-CBC', () => {
       const input = 'two seventy three alfredo sauce!';
-      const output = '7fd5e4aa58a5ba5ccd0f36f70ec73f91ca1478ceb2ee32b5a956ca460ee6f6ee';
+      const output = '7fd5e4aa58a5ba5ccd0f36f70ec73f91ca1478ceb2ee32b5a956ca460ee6f6eee8b17d087aadd93db6cfb9c08687e011';
       const key = 'KOMBUCHA IS LIFE';
+      const inputWithPad = 'two seventy three alfredo sauce!\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010\u0010';
 
       expect(two.encrypt(input, key, 0, 'utf8', 'utf8')).to.equal(output);
-      expect(two.decrypt(output, key, 0, 'hex', 'utf8')).to.equal(input);
+      expect(two.decrypt(output, key, 0, 'hex', 'utf8')).to.equal(inputWithPad);
     });
     it('should decrypt a CBC-mode AES encrypted text which given the key', () => {
       const input = fs.readFileSync(path.resolve(__dirname, '../set2/text/10.txt'), 'utf8');
@@ -141,7 +142,7 @@ describe('set2', () => {
       const fourWithSecret = four(secretSauce);
 
       // four encrypts with random consistent key, but doesn't prepend random bytes. six will be longer.
-      expect(fourWithSecret.encryptWithSecretSauce('test').length).to.not.equal(sixWithSecret.encrypt('test').length);
+      expect(fourWithSecret.encryptWithSecretSauce('happiness').length).to.not.equal(sixWithSecret.encrypt('happiness').length);
       expect(sixWithSecret.encrypt('test')).to.equal(sixWithSecret.encrypt('test'));
     });
     it('should crack the secret even with the random prepend', () => {

@@ -8,7 +8,8 @@ const padder = require('./1');
 
 const cbc = {
   encrypt(input, key, iv, inputEnc, keyEnc) {
-    const bufferedInput = padder(Buffer.isBuffer(input) ? input : Buffer.from(input, inputEnc), null, 16, true);
+    const bufferedInput = padder(Buffer.isBuffer(input) ?
+      input : Buffer.from(input, inputEnc), null, 16, true);
 
     // accept a buffer IV or just a character for us to repeat
     let xorTarget = Buffer.isBuffer(iv) && iv.length === 16 ? iv : Buffer.alloc(16).fill(iv);
@@ -16,7 +17,7 @@ const cbc = {
     const output = [];
     for (let i = 0; i + 16 <= bufferedInput.length; i += 16) {
       const currentSlice = xor(bufferedInput.slice(i, i + 16), xorTarget, true);
-      const currentSliceEnc = Buffer.from(ecb.encrypt(currentSlice, key, 'hex', keyEnc), 'hex');
+      const currentSliceEnc = Buffer.from(ecb.encrypt(currentSlice, key, 'hex', keyEnc, true), 'hex');
       output.push(currentSliceEnc);
       xorTarget = currentSliceEnc;
     }
@@ -34,10 +35,10 @@ const cbc = {
       const currentSliceDec = Buffer.from(ecb.decrypt(ciphertextSlice, key, 'hex', keyEnc, true), 'hex');
       const currentSliceXor = xor(currentSliceDec, xorTarget, true);
       output.push(currentSliceXor);
-      xorTarget = ciphertextSlice
+      xorTarget = ciphertextSlice;
     }
     return Buffer.concat(output, bufferedInput.length).toString();
-  }
+  },
 };
 
 module.exports = cbc;

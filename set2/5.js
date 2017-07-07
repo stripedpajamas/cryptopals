@@ -5,7 +5,6 @@
 const qs = require('qs');
 
 const keyGen = require('./3');
-const four = require('./4')();
 const ecb = require('../set1/7');
 
 const cutAndPaste = {
@@ -20,7 +19,7 @@ const cutAndPaste = {
     return qs.stringify({
       email: this.sanitize(email),
       uid: Math.floor((Math.random() * 89) + 10), // should be between 10 and 99 for testing
-      role: 'user'
+      role: 'user',
     }, { encode: false });
   },
   removePad(input, blockSize) {
@@ -49,9 +48,8 @@ const cutAndPaste = {
   },
   findBlockSize(encFunc) {
     let i = 1;
-    let blockGuess = 0;
     let currentSize = 0;
-    while (blockGuess < 1 && i <= 256) {
+    while (i <= 256) {
       const currentCT = Buffer.from(encFunc.call(this, 'A'.repeat(i)), 'hex');
       if (currentCT.length > currentSize && currentSize > 0) {
         return currentCT.length - currentSize;
@@ -59,7 +57,7 @@ const cutAndPaste = {
       currentSize = currentCT.length;
       i += 1;
     }
-    return blockGuess;
+    return 0;
   },
   createAdminProfile() {
     // find blocksize first
@@ -96,7 +94,7 @@ const cutAndPaste = {
 
     // pass our new profile to the decode function
     return this.decodeEncryptedProfile(adminProfile);
-  }
+  },
 };
 
 module.exports = cutAndPaste;

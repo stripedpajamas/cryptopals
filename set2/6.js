@@ -4,11 +4,11 @@
 
 const keyGen = require('./3');
 const ecb = require('../set1/7');
-const detect = require('../set1/8');
 
-const ecbDecryptPadded = (secretSauce) => ({
+const ecbDecryptPadded = secretSauce => ({
   key: keyGen.generateRandomKey(16),
-  randomPrePad: keyGen.generateRandomKey(Math.floor(Math.random() * 25 + 8)), // hopefully a length between 8 and 32 :)
+  // hopefully a length between 8 and 32 :)
+  randomPrePad: keyGen.generateRandomKey(Math.floor((Math.random() * 25) + 8)),
   encrypt(input, inputEnc) {
     const bufferedInput = Buffer.isBuffer(input) ? input : Buffer.from(input, inputEnc);
 
@@ -19,9 +19,8 @@ const ecbDecryptPadded = (secretSauce) => ({
   },
   findBlockSize(encFunc) {
     let i = 1;
-    let blockGuess = 0;
     let currentSize = 0;
-    while (blockGuess < 1 && i <= 256) {
+    while (i <= 256) {
       const currentCT = Buffer.from(encFunc.call(this, 'A'.repeat(i)), 'hex');
       if (currentCT.length > currentSize && currentSize > 0) {
         return currentCT.length - currentSize;
@@ -29,7 +28,7 @@ const ecbDecryptPadded = (secretSauce) => ({
       currentSize = currentCT.length;
       i += 1;
     }
-    return blockGuess;
+    return 0;
   },
   findFirstDupedBlock(input, blockSize) {
     const bufferedInput = Buffer.isBuffer(input) ? input : Buffer.from(input, 'hex');
@@ -73,7 +72,11 @@ const ecbDecryptPadded = (secretSauce) => ({
         const payload = Buffer.from('A'.repeat(marker - j));
         const blockToCrack = Buffer.from(this.encrypt(payload), 'hex').slice(k, k + blockSize);
         for (let i = 0; i <= 255; i += 1) {
-          const currentPayload = Buffer.concat([payload, Buffer.from(recoveredPlaintext), Buffer.from(String.fromCharCode(i))]);
+          const currentPayload = Buffer.concat([
+            payload,
+            Buffer.from(recoveredPlaintext),
+            Buffer.from(String.fromCharCode(i)),
+          ]);
           const block = Buffer.from(this.encrypt(currentPayload), 'hex').slice(k, k + blockSize);
           dictionary[block.toString('hex')] = i;
         }
@@ -82,11 +85,7 @@ const ecbDecryptPadded = (secretSauce) => ({
       }
     }
     return recoveredPlaintext;
-  }
+  },
 });
 
 module.exports = ecbDecryptPadded;
-const ss = 'dHdvc2V2ZW50eXRocmVlIHRvbWF0byBzYXVjZQ==';
-const temp = ecbDecryptPadded(ss);
-
-console.log(temp.crack());

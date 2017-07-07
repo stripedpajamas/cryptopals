@@ -10,5 +10,5 @@ module.exports = {
   b64ToHex(input) {
     const bufferedInput = Buffer.from(input, 'base64');
     return bufferedInput.toString('hex');
-  }
+  },
 };
