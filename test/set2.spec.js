@@ -17,7 +17,7 @@ const eight = require('../set2/8');
 
 const expect = chai.expect;
 
-describe('set 2', () => {
+xdescribe('set 2', () => {
   describe('challenge 1', () => {
     it('should pad according to PKCS#7', () => {
       const input = 'YELLOW SUBMARINE';
