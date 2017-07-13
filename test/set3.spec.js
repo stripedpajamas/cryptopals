@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 
 const one = require('../set3/1');
+const two = require('../set3/2');
 
 const expect = chai.expect;
 
@@ -48,6 +49,25 @@ describe('set 3', () => {
       const ct = one.encrypt();
       const cracked = one.crack(ct);
       expect(list).to.include(Buffer.from(cracked).toString('base64'));
+    });
+  });
+
+  describe('challenge 2', () => {
+    it('should increment buffers', () => {
+      expect(two.increment(Buffer.from([0, 0, 0, 0]))).to.deep.equal(Buffer.from([0, 0, 0, 1]));
+      expect(two.increment(Buffer.from([0, 0, 0, 0]), { le: true })).to.deep.equal(Buffer.from([1, 0, 0, 0]));
+    });
+    it('should encrypt and decrypt in CTR mode', () => {
+      const input = 'L77na/nrFsKvynd6HzOoG7GHTLXsTVu9qvY/2syLXzhPweyyMTJULu/6/kXX0KSvoOLSFQ==';
+      const nonce = 0;
+      const key = 'YELLOW SUBMARINE';
+      const output = 'Yo, VIP Let\'s kick it Ice, Ice, baby Ice, Ice, baby ';
+
+      const processedInput = two.process(input, nonce, key, { inputEnc: 'base64', le: true });
+      const processedOutput = two.process(output, nonce, key, { inputEnc: 'utf8', le: true });
+
+      expect(processedInput.toString()).to.equal(output);
+      expect(processedOutput.toString('base64')).to.equal(input);
     });
   });
 });
